@@ -6,21 +6,26 @@ async function getWeather() {
     try {
         const response = await fetch(apiUrl);
         const data = await response.json();
-        
+
+        // Calculate the local time in the city based on its timezone offset
+        const timezoneOffset = data.timezone; // Timezone offset in seconds
+        const localTime = new Date(new Date().getTime() + timezoneOffset * 1000); // Current time in milliseconds plus offset
+        const formattedLocalTime = localTime.toLocaleString(); // Formats the date and time as a string
+
         const weatherInfo = document.getElementById('weatherInfo');
         const iconUrl = `https://openweathermap.org/img/wn/${data.weather[0].icon}.png`;
-      
+
         weatherInfo.innerHTML = `
-           
             <div class="weather-details">
                 <div>
-                <h2>${data.name}</h2>
+                    <h2>${data.name}</h2>
+                    <p>Local Time: ${formattedLocalTime}</p> <!-- Display the local time -->
                     <p>${data.weather[0].description}</p>
                     <p>Temperature: ${data.main.temp}°C</p>
                     <p>Humidity: ${data.main.humidity}%</p>
                 </div>
-                <div >
-                    <img  class="x" src="${iconUrl}" alt="Weather Icon">
+                <div>
+                    <img class="x" src="${iconUrl}" alt="Weather Icon">
                 </div>
             </div>
         `;
@@ -28,3 +33,4 @@ async function getWeather() {
         console.error('Error fetching weather data:', error);
     }
 }
+
